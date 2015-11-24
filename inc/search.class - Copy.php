@@ -349,9 +349,7 @@ class Search {
                      }
                      $WHERE .= self::addWhere($LINK, $NOT, $itemtype, $p['field'][$key],
                                               $p['searchtype'][$key], $p['contains'][$key]);
-                  
-				  
-				  }
+                  }
 
                // view and all search
                } else {
@@ -392,7 +390,7 @@ class Search {
                   if (!empty($WHERE)) {
                      $WHERE .= $globallink;
                   }
-                  $WHERE .= "(";
+                  $WHERE .= " ( ";
                   $first2 = true;
 
                   $items = array();
@@ -422,7 +420,7 @@ class Search {
                         }
                      }
                   }
-                  $WHERE .= ")";
+                  $WHERE .= " ) ";
                }
             }
          }
@@ -786,10 +784,6 @@ class Search {
                   $LIMIT;
       }
 
-	 
-	  
-	  
-	  
       $DBread->query("SET SESSION group_concat_max_len = 4096;");
       $result = $DBread->query($QUERY);
       /// Check group concat limit : if warning : increase limit
@@ -802,8 +796,6 @@ class Search {
             }
          }
       }
-	  
-	  //echo($WHERE);
 
 
       // Get it from database and DISPLAY
@@ -2368,7 +2360,7 @@ class Search {
             return " SUM(`glpi_ticketcosts$addtable`.`$field`)
                      / COUNT(`glpi_ticketcosts$addtable`.`id`)
                      * COUNT(DISTINCT `glpi_ticketcosts$addtable`.`id`)
-                     AS TRIM".$NAME."_".$num.",
+                     AS ".$NAME."_".$num.",
                      $ADDITONALFIELDS";
 
          case "glpi_ticketcosts.totalcost" :
@@ -5962,10 +5954,7 @@ class Search {
 
       // Unclean to permit < and > search
       $val = Toolbox::unclean_cross_side_scripting_deep($val);
-  
-  
-    
-	  
+
       if (($val == 'NULL') || ($val == 'null')) {
          $SEARCH = " IS $NOT NULL ";
 
@@ -5985,15 +5974,9 @@ class Search {
          if ($begin || $end) {
             // no Toolbox::substr, to be consistent with strlen result
             $val = substr($val, $begin, $length-$end-$begin);
-			
-			
          }
 
-		 // AKK Modified due to lenovo Search on 26/10/2015 11:20 AM
-	     $val = trim($val);
-         //echo( $val);
-		 // AKK Modified due to lenovo Search on 26/10/2015 11:20 AM
-		 $SEARCH = " $NOT LIKE '".(!$begin?"%":"").$val.(!$end?"%":"")."' ";
+         $SEARCH = " $NOT LIKE '".(!$begin?"%":"").$val.(!$end?"%":"")."' ";
       }
       return $SEARCH;
    }

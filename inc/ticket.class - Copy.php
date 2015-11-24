@@ -606,16 +606,56 @@ class Ticket extends CommonITILObject {
 	  // akk Update custom field
 				 
 				 global $DB;
+				 
+				  $query_check_exists = "Select * from tbl_customfields where Ticket_ID=".$this->fields['id'] ; 
+				 
+				 if ($result = $DB->query($query_check_exists)) {
+                  if ($DB->numrows($result) == 1) {
 
-				  $sql = "Update tbl_customfields SET Custom_field_id='".$_POST["CustomFields"]."' ,Job_SO_NO= '".$_POST["SO"]."'  where Ticket_ID=".$this->fields['id'] ; 
-		          //echo($sql);
+				  $sql = "Update tbl_customfields SET Custom_field_id='".$_POST["CustomFields"]."'  where Ticket_ID=".$this->fields['id'] ; 
+		         // echo($sql);
 				  $DB->query($sql); 
-				  
-				  
-				  
-				  
+			
+		  
+         }
+		 else
+		 {
+			
+			if($_POST["CustomFields"]!=0)
+			  { 
+			
+				
+	           $sql = "INSERT INTO tbl_customfields
+              VALUES ('".$this->fields['id']."',  '".$_POST["CustomFields"]."')";
+			  
+			  
+			  $DB->query($sql);
+				
+		       } 
+			   
+			   // restict for None value
+			   
+			   
+			    
+			   
+			   
+			
+			/* 
+				// now open to all value 
+	           $sql = "INSERT INTO tbl_customfields
+              VALUES ('".$this->fields['id']."',  '".$_POST["CustomFields"]."')";
+			  
+			  
+			  $DB->query($sql); */
+			  
+	      	 
+    		  
 
-    
+		 
+		 
+		 }
+		 
+      }
 				 
 				 
 				
@@ -1318,7 +1358,7 @@ class Ticket extends CommonITILObject {
 
 
 
-			/* if($_POST["CustomFields"]!=0)
+			if($_POST["CustomFields"]!=0)
 			  { 
 			
 				
@@ -1330,7 +1370,7 @@ class Ticket extends CommonITILObject {
 				
 		       } 
 			   
-			   // restict for None value */
+			   // restict for None value
 			   
 			   
 			    
@@ -1338,14 +1378,14 @@ class Ticket extends CommonITILObject {
 			   
 			
 			
-				// Custom fields and Job SO No.
+			/* 	// now open to all value 
 	           $sql = "INSERT INTO tbl_customfields
-              VALUES ('".$this->fields['id']."',  '".$_POST["CustomFields"]."','".$_POST["SO"]."')";
+              VALUES ('".$this->fields['id']."',  '".$_POST["CustomFields"]."')";
 			  
 			  
-			  $DB->query($sql);
+			  $DB->query($sql); */
 				
-			// Custom fields and Job SO No.
+		
 			   
 			
 			 
@@ -3795,7 +3835,7 @@ class Ticket extends CommonITILObject {
 		  {
 			  
 			  
-			   $Job_So_NO=$data['Job_SO_NO'];
+			   
 			   
 			    if($data['Custom_field_id']==1)
                   $Reasonpopup_chose1='Selected';
@@ -3804,12 +3844,6 @@ class Ticket extends CommonITILObject {
 				
 				  if($data['Custom_field_id']==3)
 	                 $Reasonpopup_chose3='Selected';
-		  
-		       
-		  
-		  
-		  
-		  
 		  }
            
          
@@ -3964,9 +3998,6 @@ class Ticket extends CommonITILObject {
             }
          }
       }
-	  
-	  
-
 
       // In percent
       $colsize1 = '13';
@@ -4580,10 +4611,7 @@ class Ticket extends CommonITILObject {
       $view_linked_tickets = ($ID || $canupdate);
 
       echo "<table class='tab_cadre_fixe' id='mainformtable4'>";
-     
-       //akk ticket title
-
-    	 echo "<tr class='tab_bg_1'>";
+      echo "<tr class='tab_bg_1'>";
       echo "<th width='$colsize1%'>".$tt->getBeginHiddenFieldText('name');
       printf(__('%1$s%2$s'), __('Title'), $tt->getMandatoryMark('name'));
       echo $tt->getEndHiddenFieldText('name')."</th>";
@@ -4630,98 +4658,7 @@ class Ticket extends CommonITILObject {
       echo "</td>";
       echo "</tr>";
 
-     
-     //akk ticket title 
-
-
-
-/* //akk custom SO No Not working of GLPI base
-
-    	 echo "<tr class='tab_bg_1'>";
-      echo "<th width='$colsize1%'>".$tt->getBeginHiddenFieldText('SO');
-      printf(__('%1$s%2$s'), __('SO Number'), "");
-      echo $tt->getEndHiddenFieldText('SO')."</th>";
-      echo "<td width='".(100-$colsize1)."%' colspan='3'>";
-      if (!$ID || $canupdate_descr) {
-         echo $tt->getBeginHiddenFieldValue('SO');
-
-         $rand = mt_rand();
-         echo "<script type='text/javascript' >\n";
-         echo "function showName$rand() {\n";
-         echo "Ext.get('name$rand').setDisplayed('none');";
-         $params = array('maxlength' => 250,
-                         'size'      => 90,
-                         'name'      => 'SO',
-                         'data'      => rawurlencode($Job_So_NO));
-         Ajax::updateItemJsCode("viewname$rand", $CFG_GLPI["root_doc"]."/ajax/inputtext.php",
-                                $params);
-         echo "}";
-         echo "</script>\n";
-         echo "<div id='name$rand' class='tracking left' onClick='showName$rand()'>\n";
-         
-		 
-		 if (empty($Job_So_NO)) {
-            _e('Empty');
-         } else {
-            echo ($Job_So_NO);
-         }
-        
-           //$this->fields["SO"] =$Job_So_NO;
-
-
-		echo "</div>\n";
-
-         echo "<div id='viewname$rand'>\n";
-         echo "</div>\n";
-         if (!$ID) {
-            echo "<script type='text/javascript' >\n
-            showName$rand();
-            </script>";
-         }
-         echo $tt->getEndHiddenFieldValue('SO', $this);
-
-      } else {
-         if (empty($Job_So_NO)) {
-            _e('Empty');
-         } else {
-            echo ($Job_So_NO);
-         }
-      }
-      echo "</td>";
-      echo "</tr>";
-
-     
-   
-
-/* //akk custom SO No Not working of GLPI base
-
-
-
-
-   //akk custom SO No */
-   
-   
-    //akk custom SO No
-	
-	 echo "<tr class='tab_bg_1'>";
-	
-	 echo "<th width='$colsize1%'>".$tt->getBeginHiddenFieldText('SO');
-      printf(__('%1$s%2$s'), __('SO Number'), "");
-	  
-	    echo $tt->getEndHiddenFieldText('SO')."</th>";
-      echo "<td width='".(100-$colsize1)."%' colspan='3'>";
-	 
-	echo("<input size='19' maxlength='20' name='SO' value='$Job_So_NO' type='text'></th></tr>");
-	 //akk custom SO No
-	 
-	 
-
-
-
-
-
-
-	 echo "<tr class='tab_bg_1'>";
+      echo "<tr class='tab_bg_1'>";
       echo "<th width='$colsize1%'>".$tt->getBeginHiddenFieldText('content');
       printf(__('%1$s%2$s'), __('Description'), $tt->getMandatoryMark('content'));
       echo $tt->getEndHiddenFieldText('content')."</th>";
